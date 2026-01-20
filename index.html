@@ -8,19 +8,9 @@
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@700&display=swap');
 
         /* --- [폰트 파일 연결 설정] --- */
-        @font-face {
-            font-family: 'DOSIyagi';
-            src: url('DOSIyagiBoldface.ttf') format('truetype');
-        }
-        @font-face {
-            font-family: 'DNFBitBit';
-            src: url('DNFBitBitv2.ttf') format('truetype');
-        }
-        @font-face {
-            font-family: 'Cafe24PROUP';
-            src: url('Cafe24PROUP.ttf') format('truetype');
-        }
-        /* --------------------------- */
+        @font-face { font-family: 'DOSIyagi'; src: url('DOSIyagiBoldface.ttf') format('truetype'); }
+        @font-face { font-family: 'DNFBitBit'; src: url('DNFBitBitv2.ttf') format('truetype'); }
+        @font-face { font-family: 'Cafe24PROUP'; src: url('Cafe24PROUP.ttf') format('truetype'); }
 
         :root {
             --border-color: #FFB7C5; 
@@ -38,9 +28,9 @@
             background-color: transparent;
             font-family: 'Noto Sans KR', sans-serif;
             padding: 20px;
+            overflow: hidden; /* 드래그 시 스크롤 방지 */
         }
 
-        /* 1. [테두리 - 흰 바탕] */
         .outer-frame {
             width: 200px; 
             background-color: #FFFFFF;
@@ -48,18 +38,18 @@
             border-radius: 25px;
             padding: 5px;
             box-sizing: border-box;
+            transition: border-color 0.3s ease;
         }
 
-        /* 2. [색 배경] */
         .inner-color-bg {
             background-color: var(--bg-color);
             border-radius: 20px;
             padding: 10px 8px;
             display: flex;
             flex-direction: column;
+            transition: background-color 0.3s ease;
         }
 
-        /* 3. [상단바 - 대칭 하트] */
         .header {
             display: flex;
             justify-content: space-between;
@@ -83,14 +73,9 @@
             align-items: center;
         }
 
-        .settings-trigger { 
-            cursor: pointer; 
-            color: var(--border-color);
-            transition: transform 0.2s;
-        }
+        .settings-trigger { cursor: pointer; transition: transform 0.2s; }
         .settings-trigger:hover { transform: scale(1.1); }
 
-        /* 4. [테두리 - 격자 배경] */
         .clock-screen {
             background-color: #FFFFFF;
             border: 1.5px solid var(--border-color);
@@ -106,24 +91,12 @@
             background-size: 8px 8px;
         }
 
-        /* 시간 글자 설정 */
-        .time-text {
-            font-size: 38px;
-            color: var(--text-color);
-            font-weight: normal; /* 커스텀 폰트 자체 굵기 사용 */
-            letter-spacing: -1px;
-        }
+        .time-text { font-size: 38px; color: var(--text-color); letter-spacing: -1px; }
+        .ampm-text { font-size: 11px; color: var(--border-color); margin-left: 4px; font-weight: 700; }
 
-        .ampm-text {
-            font-size: 11px;
-            color: var(--border-color);
-            margin-left: 4px;
-            font-weight: 700;
-        }
-
-        /* 설정 팝업 */
+        /* 설정 팝업 - 드래그 가능 스타일 */
         #settingsPanel {
-            width: 175px;
+            width: 180px;
             background: #fff;
             border: 1.5px solid var(--border-color);
             border-radius: 12px;
@@ -132,14 +105,59 @@
             left: 220px;
             top: 20px;
             z-index: 100;
-            padding: 12px;
+            padding: 0; /* 헤더 영역 분리를 위해 0으로 조정 */
             font-size: 11px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            cursor: default;
+            user-select: none;
         }
+
+        /* 드래그 핸들 (상단바) */
+        .settings-header {
+            background: var(--bg-color);
+            padding: 8px 12px;
+            border-radius: 11px 11px 0 0;
+            cursor: move; /* 이동 가능 아이콘 */
+            font-weight: bold;
+            color: var(--border-color);
+            text-align: center;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .settings-content {
+            padding: 12px;
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .theme-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 5px 0;
+        }
+
+        .theme-preview {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-bottom: 4px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .theme-name { font-size: 9px; color: #888; }
         .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         input[type="color"] { width: 20px; height: 18px; border: 1px solid #eee; padding: 0; cursor: pointer; }
         select { font-size: 10px; width: 105px; padding: 2px; border: 1px solid #ddd; border-radius: 3px; }
-        .close-btn { width: 100%; margin-top: 8px; padding: 5px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--border-color); border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 10px; }
+        .close-btn { width: 100%; margin-top: 5px; padding: 5px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--border-color); border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 10px; }
     </style>
 </head>
 <body>
@@ -161,23 +179,33 @@
 </div>
 
 <div id="settingsPanel">
-    <div style="font-weight:bold; margin-bottom:10px; color:var(--border-color); text-align:center;">Today Settings</div>
+    <div class="settings-header" id="dragHandle">Widget Settings</div>
     
-    <div class="setting-item">테두리 <input type="color" id="borderColor"></div>
-    <div class="setting-item">배경색 <input type="color" id="bgColor"></div>
-    <div class="setting-item">글자색 <input type="color" id="textColor"></div>
-    
-    <div class="setting-item" style="margin-top:10px;">
-        폰트 선택
-        <select id="fontSelect" onchange="changeFont(this.value)">
-            <option value="sans-serif">기본</option>
-            <option value="'DOSIyagi'">DOS 이야기체</option>
-            <option value="'DNFBitBit'">던파 비트비트</option>
-            <option value="'Cafe24PROUP'">카페24 프라우프</option>
-        </select>
-    </div>
+    <div class="settings-content">
+        <div class="theme-grid">
+            <div class="theme-btn" onclick="setTheme('#FFB7C5', '#fef5f8')"><div class="theme-preview" style="background: #FFB7C5;"></div><div class="theme-name">핑크</div></div>
+            <div class="theme-btn" onclick="setTheme('#DCD0FF', '#f9f7ff')"><div class="theme-preview" style="background: #DCD0FF;"></div><div class="theme-name">퍼플</div></div>
+            <div class="theme-btn" onclick="setTheme('#999999', '#f5f5f5')"><div class="theme-preview" style="background: #999999;"></div><div class="theme-name">다크</div></div>
+            <div class="theme-btn" onclick="setTheme('#D3D3D3', '#ffffff')"><div class="theme-preview" style="background: #D3D3D3;"></div><div class="theme-name">화이트</div></div>
+            <div class="theme-btn" onclick="setTheme('#B2D8B2', '#f6faf6')"><div class="theme-preview" style="background: #B2D8B2;"></div><div class="theme-name">그린</div></div>
+            <div class="theme-btn" onclick="setTheme('#B0C4DE', '#f4f8fb')"><div class="theme-preview" style="background: #B0C4DE;"></div><div class="theme-name">블루</div></div>
+        </div>
 
-    <button class="close-btn" onclick="toggleSettings()">저장 후 닫기</button>
+        <div style="border-top: 1px dashed #eee; padding-top: 10px;">
+            <div class="setting-item">테두리 <input type="color" id="borderColor"></div>
+            <div class="setting-item">배경색 <input type="color" id="bgColor"></div>
+            <div class="setting-item">글자색 <input type="color" id="textColor"></div>
+            <div class="setting-item" style="margin-top:5px;">
+                폰트 <select id="fontSelect" onchange="changeFont(this.value)">
+                    <option value="sans-serif">기본</option>
+                    <option value="'DOSIyagi'">DOS 이야기체</option>
+                    <option value="'DNFBitBit'">던파 비트비트</option>
+                    <option value="'Cafe24PROUP'">카페24 프라우프</option>
+                </select>
+            </div>
+        </div>
+        <button class="close-btn" onclick="toggleSettings()">설정 닫기</button>
+    </div>
 </div>
 
 <script>
@@ -198,11 +226,8 @@
         document.getElementById('ampmDisplay').innerText = ampm;
     }
 
-    let config = JSON.parse(localStorage.getItem('yy-today-vFinal')) || { 
-        border: '#FFB7C5', 
-        bg: '#fef5f8', 
-        text: '#444444',
-        font: "'DOSIyagi'"
+    let config = JSON.parse(localStorage.getItem('yy-today-vFinal-Theme')) || { 
+        border: '#FFB7C5', bg: '#fef5f8', text: '#444444', font: "'DOSIyagi'"
     };
 
     function applyConfig() {
@@ -210,34 +235,42 @@
         root.style.setProperty('--border-color', config.border);
         root.style.setProperty('--bg-color', config.bg);
         root.style.setProperty('--text-color', config.text);
-        
         document.getElementById('timeDisplay').style.fontFamily = config.font;
         document.getElementById('ampmDisplay').style.fontFamily = config.font;
-
         document.getElementById('borderColor').value = config.border;
         document.getElementById('bgColor').value = config.bg;
         document.getElementById('textColor').value = config.text;
         document.getElementById('fontSelect').value = config.font;
     }
 
-    function toggleSettings() {
-        const panel = document.getElementById('settingsPanel');
-        panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
-    }
-
-    function changeFont(font) {
-        config.font = font;
-        saveConfig();
-    }
-
-    function saveConfig() {
-        localStorage.setItem('yy-today-vFinal', JSON.stringify(config));
-        applyConfig();
-    }
+    function setTheme(border, bg) { config.border = border; config.bg = bg; saveConfig(); }
+    function toggleSettings() { const panel = document.getElementById('settingsPanel'); panel.style.display = (panel.style.display === 'block') ? 'none' : 'block'; }
+    function changeFont(font) { config.font = font; saveConfig(); }
+    function saveConfig() { localStorage.setItem('yy-today-vFinal-Theme', JSON.stringify(config)); applyConfig(); }
 
     document.getElementById('borderColor').addEventListener('input', (e) => { config.border = e.target.value; saveConfig(); });
     document.getElementById('bgColor').addEventListener('input', (e) => { config.bg = e.target.value; saveConfig(); });
     document.getElementById('textColor').addEventListener('input', (e) => { config.text = e.target.value; saveConfig(); });
+
+    // --- [드래그 기능 로직] ---
+    const settingsPanel = document.getElementById('settingsPanel');
+    const dragHandle = document.getElementById('dragHandle');
+    let isDragging = false;
+    let offset = { x: 0, y: 0 };
+
+    dragHandle.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        offset.x = e.clientX - settingsPanel.offsetLeft;
+        offset.y = e.clientY - settingsPanel.offsetTop;
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        settingsPanel.style.left = (e.clientX - offset.x) + 'px';
+        settingsPanel.style.top = (e.clientY - offset.y) + 'px';
+    });
+
+    document.addEventListener('mouseup', () => { isDragging = false; });
 
     setInterval(updateClock, 1000);
     updateClock();
