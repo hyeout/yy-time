@@ -3,164 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notion Minimal Timer</title>
+    <title>yy today</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@700&display=swap');
+
+        /* --- [폰트 파일 연결 설정] --- */
+        @font-face {
+            font-family: 'DOSIyagi';
+            src: url('DOSIyagiBoldface.ttf') format('truetype');
+        }
+        @font-face {
+            font-family: 'DNFBitBit';
+            src: url('DNFBitBitv2.ttf') format('truetype');
+        }
+        @font-face {
+            font-family: 'Cafe24PROUP';
+            src: url('Cafe24PROUP.ttf') format('truetype');
+        }
+        /* --------------------------- */
+
+        :root {
+            --border-color: #FFB7C5; 
+            --bg-color: #fef5f8;    
+            --text-color: #444444;  
+            --grid-color: rgba(0, 0, 0, 0.03);
+        }
 
         body {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            justify-content: flex-start;
+            align-items: flex-start;
+            min-height: 100vh;
             margin: 0;
             background-color: transparent;
-            font-family: 'Inter', sans-serif;
-            overflow: hidden;
+            font-family: 'Noto Sans KR', sans-serif;
+            padding: 20px;
         }
 
-        .timer-card {
-            background: #FFFFFF; 
-            border: 2px solid #B9C9E9; /* 요청하신 메인 컬러 */
-            border-radius: 30px;
-            box-shadow: 0 10px 25px rgba(185, 201, 233, 0.2);
-            
-            width: 210px; /* 디데이 위젯과 유사한 너비 */
-            height: 175px;
-            padding: 15px;
+        /* 1. [테두리 - 흰 바탕] */
+        .outer-frame {
+            width: 200px; 
+            background-color: #FFFFFF;
+            border: 1.5px solid var(--border-color);
+            border-radius: 25px;
+            padding: 5px;
             box-sizing: border-box;
+        }
 
+        /* 2. [색 배경] */
+        .inner-color-bg {
+            background-color: var(--bg-color);
+            border-radius: 20px;
+            padding: 10px 8px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+        }
+
+        /* 3. [상단바 - 대칭 하트] */
+        .header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            user-select: none;
+            padding: 0 5px 6px 5px;
+            color: var(--border-color);
         }
 
-        .time-display {
-            font-size: 44px;
+        .header-left {
+            display: flex;
+            align-items: center;
+            font-size: 11px;
             font-weight: 700;
-            color: #4A5568; /* 깔끔한 진회색 */
-            margin-bottom: 12px;
-            letter-spacing: -1.5px;
+            gap: 4px;
+        }
+        
+        .heart-icon, .settings-trigger {
+            font-size: 11px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
         }
 
-        .progress-container {
-            width: 85%;
-            height: 6px;
-            background: #EDF2F7;
-            margin-bottom: 18px;
-            border-radius: 10px;
-            overflow: hidden;
+        .settings-trigger { 
+            cursor: pointer; 
+            color: var(--border-color);
+            transition: transform 0.2s;
         }
-        .progress-bar {
-            width: 0%;
-            height: 100%;
-            background: #B9C9E9;
-            transition: width 1s linear;
-        }
+        .settings-trigger:hover { transform: scale(1.1); }
 
-        .controls {
+        /* 4. [테두리 - 격자 배경] */
+        .clock-screen {
+            background-color: #FFFFFF;
+            border: 1.5px solid var(--border-color);
+            border-radius: 15px;
+            padding: 15px 0;
             display: flex;
             justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 8px;
+            align-items: baseline;
+            position: relative;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 8px 8px;
         }
-        .step-btn {
-            background: none; border: none;
-            color: #B2BECF;
-            cursor: pointer; padding: 4px;
-            display: flex; align-items: center;
-            transition: color 0.2s;
-        }
-        .step-btn:hover { color: #B9C9E9; }
-        
-        .start-btn {
-            background: #B9C9E9;
-            border: none;
-            padding: 8px 24px;
-            border-radius: 12px;
-            font-weight: 700;
-            color: #FFFFFF;
-            cursor: pointer;
-            font-size: 14px;
-            box-shadow: 0 4px 12px rgba(185, 201, 233, 0.4);
-            transition: all 0.2s;
-        }
-        .start-btn:active { transform: scale(0.96); }
 
-        .cancel-btn {
-            background: none; border: none;
-            color: #CBD5E0;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
+        /* 시간 글자 설정 */
+        .time-text {
+            font-size: 38px;
+            color: var(--text-color);
+            font-weight: normal; /* 커스텀 폰트 자체 굵기 사용 */
+            letter-spacing: -1px;
         }
+
+        .ampm-text {
+            font-size: 11px;
+            color: var(--border-color);
+            margin-left: 4px;
+            font-weight: 700;
+        }
+
+        /* 설정 팝업 */
+        #settingsPanel {
+            width: 175px;
+            background: #fff;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            display: none; 
+            position: absolute;
+            left: 220px;
+            top: 20px;
+            z-index: 100;
+            padding: 12px;
+            font-size: 11px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        input[type="color"] { width: 20px; height: 18px; border: 1px solid #eee; padding: 0; cursor: pointer; }
+        select { font-size: 10px; width: 105px; padding: 2px; border: 1px solid #ddd; border-radius: 3px; }
+        .close-btn { width: 100%; margin-top: 8px; padding: 5px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--border-color); border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 10px; }
     </style>
 </head>
 <body>
 
-<div class="timer-card">
-    <div class="time-display" id="display">00:00</div>
+<div class="outer-frame">
+    <div class="inner-color-bg">
+        <div class="header">
+            <div class="header-left">
+                <span class="heart-icon">❤</span>
+                <span id="dateDisplay">1.20 TUE</span>
+            </div>
+            <div class="settings-trigger" onclick="toggleSettings()">❤</div>
+        </div>
+        <div class="clock-screen">
+            <span class="time-text" id="timeDisplay">00 00</span>
+            <span class="ampm-text" id="ampmDisplay">PM</span>
+        </div>
+    </div>
+</div>
+
+<div id="settingsPanel">
+    <div style="font-weight:bold; margin-bottom:10px; color:var(--border-color); text-align:center;">Today Settings</div>
     
-    <div class="progress-container">
-        <div class="progress-bar" id="progress"></div>
+    <div class="setting-item">테두리 <input type="color" id="borderColor"></div>
+    <div class="setting-item">배경색 <input type="color" id="bgColor"></div>
+    <div class="setting-item">글자색 <input type="color" id="textColor"></div>
+    
+    <div class="setting-item" style="margin-top:10px;">
+        폰트 선택
+        <select id="fontSelect" onchange="changeFont(this.value)">
+            <option value="sans-serif">기본</option>
+            <option value="'DOSIyagi'">DOS 이야기체</option>
+            <option value="'DNFBitBit'">던파 비트비트</option>
+            <option value="'Cafe24PROUP'">카페24 프라우프</option>
+        </select>
     </div>
 
-    <div class="controls">
-        <button class="step-btn" id="minus">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14"></path></svg>
-        </button>
-        <button class="start-btn" id="start">Start</button>
-        <button class="step-btn" id="plus">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
-        </button>
-    </div>
-    <button class="cancel-btn" id="reset">Cancel</button>
+    <button class="close-btn" onclick="toggleSettings()">저장 후 닫기</button>
 </div>
 
 <script>
-    let timeLeft = 0;
-    let totalTime = 0;
-    let timerId = null;
-    let isRunning = false;
+    function updateClock() {
+        const now = new Date();
+        const month = now.getMonth() + 1;
+        const date = now.getDate();
+        const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+        document.getElementById('dateDisplay').innerText = `${month}.${date} ${days[now.getDay()]}`;
 
-    const display = document.getElementById('display');
-    const progress = document.getElementById('progress');
-    const startBtn = document.getElementById('start');
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12;
+        const hoursStr = String(hours).padStart(2, '0');
 
-    function updateDisplay() {
-        const mins = Math.floor(timeLeft / 60);
-        const secs = timeLeft % 60;
-        display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        progress.style.width = totalTime > 0 ? `${((totalTime - timeLeft) / totalTime) * 100}%` : '0%';
+        document.getElementById('timeDisplay').innerText = `${hoursStr} ${minutes}`;
+        document.getElementById('ampmDisplay').innerText = ampm;
     }
 
-    document.getElementById('plus').onclick = () => { if (!isRunning) { timeLeft += 60; totalTime = timeLeft; updateDisplay(); }};
-    document.getElementById('minus').onclick = () => { if (!isRunning && timeLeft >= 60) { timeLeft -= 60; totalTime = timeLeft; updateDisplay(); }};
-
-    startBtn.onclick = () => {
-        if (isRunning) {
-            clearInterval(timerId);
-            startBtn.textContent = 'Start';
-            isRunning = false;
-        } else if (timeLeft > 0) {
-            isRunning = true;
-            startBtn.textContent = 'Pause';
-            timerId = setInterval(() => {
-                timeLeft--;
-                updateDisplay();
-                if (timeLeft <= 0) { clearInterval(timerId); isRunning = false; startBtn.textContent = 'Start'; }
-            }, 1000);
-        }
+    let config = JSON.parse(localStorage.getItem('yy-today-vFinal')) || { 
+        border: '#FFB7C5', 
+        bg: '#fef5f8', 
+        text: '#444444',
+        font: "'DOSIyagi'"
     };
 
-    document.getElementById('reset').onclick = () => {
-        clearInterval(timerId);
-        timeLeft = 0; totalTime = 0; isRunning = false;
-        startBtn.textContent = 'Start';
-        updateDisplay();
-    };
+    function applyConfig() {
+        const root = document.documentElement;
+        root.style.setProperty('--border-color', config.border);
+        root.style.setProperty('--bg-color', config.bg);
+        root.style.setProperty('--text-color', config.text);
+        
+        document.getElementById('timeDisplay').style.fontFamily = config.font;
+        document.getElementById('ampmDisplay').style.fontFamily = config.font;
+
+        document.getElementById('borderColor').value = config.border;
+        document.getElementById('bgColor').value = config.bg;
+        document.getElementById('textColor').value = config.text;
+        document.getElementById('fontSelect').value = config.font;
+    }
+
+    function toggleSettings() {
+        const panel = document.getElementById('settingsPanel');
+        panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function changeFont(font) {
+        config.font = font;
+        saveConfig();
+    }
+
+    function saveConfig() {
+        localStorage.setItem('yy-today-vFinal', JSON.stringify(config));
+        applyConfig();
+    }
+
+    document.getElementById('borderColor').addEventListener('input', (e) => { config.border = e.target.value; saveConfig(); });
+    document.getElementById('bgColor').addEventListener('input', (e) => { config.bg = e.target.value; saveConfig(); });
+    document.getElementById('textColor').addEventListener('input', (e) => { config.text = e.target.value; saveConfig(); });
+
+    setInterval(updateClock, 1000);
+    updateClock();
+    applyConfig();
 </script>
 
 </body>
