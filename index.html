@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notion Minimal Timer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap');
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: transparent;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        .timer-card {
+            background: #FFFFFF; 
+            border: 2px solid #B9C9E9; /* 요청하신 메인 컬러 */
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(185, 201, 233, 0.2);
+            
+            width: 210px; /* 디데이 위젯과 유사한 너비 */
+            height: 175px;
+            padding: 15px;
+            box-sizing: border-box;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+        }
+
+        .time-display {
+            font-size: 44px;
+            font-weight: 700;
+            color: #4A5568; /* 깔끔한 진회색 */
+            margin-bottom: 12px;
+            letter-spacing: -1.5px;
+        }
+
+        .progress-container {
+            width: 85%;
+            height: 6px;
+            background: #EDF2F7;
+            margin-bottom: 18px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #B9C9E9;
+            transition: width 1s linear;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 8px;
+        }
+        .step-btn {
+            background: none; border: none;
+            color: #B2BECF;
+            cursor: pointer; padding: 4px;
+            display: flex; align-items: center;
+            transition: color 0.2s;
+        }
+        .step-btn:hover { color: #B9C9E9; }
+        
+        .start-btn {
+            background: #B9C9E9;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            color: #FFFFFF;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(185, 201, 233, 0.4);
+            transition: all 0.2s;
+        }
+        .start-btn:active { transform: scale(0.96); }
+
+        .cancel-btn {
+            background: none; border: none;
+            color: #CBD5E0;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<div class="timer-card">
+    <div class="time-display" id="display">00:00</div>
+    
+    <div class="progress-container">
+        <div class="progress-bar" id="progress"></div>
+    </div>
+
+    <div class="controls">
+        <button class="step-btn" id="minus">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14"></path></svg>
+        </button>
+        <button class="start-btn" id="start">Start</button>
+        <button class="step-btn" id="plus">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
+        </button>
+    </div>
+    <button class="cancel-btn" id="reset">Cancel</button>
+</div>
+
+<script>
+    let timeLeft = 0;
+    let totalTime = 0;
+    let timerId = null;
+    let isRunning = false;
+
+    const display = document.getElementById('display');
+    const progress = document.getElementById('progress');
+    const startBtn = document.getElementById('start');
+
+    function updateDisplay() {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        progress.style.width = totalTime > 0 ? `${((totalTime - timeLeft) / totalTime) * 100}%` : '0%';
+    }
+
+    document.getElementById('plus').onclick = () => { if (!isRunning) { timeLeft += 60; totalTime = timeLeft; updateDisplay(); }};
+    document.getElementById('minus').onclick = () => { if (!isRunning && timeLeft >= 60) { timeLeft -= 60; totalTime = timeLeft; updateDisplay(); }};
+
+    startBtn.onclick = () => {
+        if (isRunning) {
+            clearInterval(timerId);
+            startBtn.textContent = 'Start';
+            isRunning = false;
+        } else if (timeLeft > 0) {
+            isRunning = true;
+            startBtn.textContent = 'Pause';
+            timerId = setInterval(() => {
+                timeLeft--;
+                updateDisplay();
+                if (timeLeft <= 0) { clearInterval(timerId); isRunning = false; startBtn.textContent = 'Start'; }
+            }, 1000);
+        }
+    };
+
+    document.getElementById('reset').onclick = () => {
+        clearInterval(timerId);
+        timeLeft = 0; totalTime = 0; isRunning = false;
+        startBtn.textContent = 'Start';
+        updateDisplay();
+    };
+</script>
+
+</body>
+</html>
